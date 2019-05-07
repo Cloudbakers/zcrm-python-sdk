@@ -7,8 +7,8 @@ try:
     from .OAuthUtility import OAuthLogger
 except ImportError:
     from OAuthUtility import OAuthLogger
-#import MySQLdb
-#import mysql.connector
+import MySQLdb
+import mysql.connector
 class ZohoOAuthPersistenceHandler(object):
     '''
     This class deals with persistance of oauth related tokens
@@ -29,8 +29,8 @@ class ZohoOAuthPersistenceHandler(object):
             raise ex
         finally:
             cursor.close()
-            connection.close()    
-        
+            connection.close()
+
     def getOAuthTokens(self,userEmail):
         try:
             connection=self.getDBConnection()
@@ -69,7 +69,7 @@ class ZohoOAuthPersistenceHandler(object):
         finally:
             cursor.close()
             connection.close()
-            
+
     def getDBConnection(self):
         try:
             from .OAuthClient import ZohoOAuth
@@ -78,7 +78,7 @@ class ZohoOAuthPersistenceHandler(object):
             from OAuthClient import ZohoOAuth
             from OAuthUtility import ZohoOAuthConstants
         import mysql.connector
-        connection=mysql.connector.connect(user=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME], password=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD],port=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT],database='zohooauth')
+        connection=mysql.connector.connect(user=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME], password=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD],host=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_HOST],port=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT],database='zohooauth')
         return connection
         #connection=MySQLdb.connect(host="localhost",user="root",passwd="",db="zohooauth")
         #return connection
@@ -104,12 +104,12 @@ class ZohoOAuthPersistenceFileHandler(object):
             else:
                 with open(ZohoOAuthConstants.PERSISTENCE_FILE_NAME, 'wb') as fp:
                     pickle.dump(oAuthTokens, fp, pickle.HIGHEST_PROTOCOL)
-            
+
         except Exception as ex:
             import logging
             OAuthLogger.add_log("Exception occured while saving oauthtokens into File ",logging.ERROR,ex)
             raise ex
-        
+
     def getOAuthTokens(self,userEmail):
         try:
             import pickle
@@ -138,7 +138,7 @@ class ZohoOAuthPersistenceFileHandler(object):
             import logging
             OAuthLogger.add_log("Exception occured while fetching oauthtokens from File ",logging.ERROR,ex)
             raise ex
-            
+
     def deleteOAuthTokens(self,userEmail):
         try:
             import pickle
@@ -164,7 +164,7 @@ class ZohoOAuthPersistenceFileHandler(object):
             with open(ZohoOAuthConstants.PERSISTENCE_FILE_NAME, 'wb') as fp:
                 for eachObj in objectsToPreserve:
                     pickle.dump(eachObj, fp, pickle.HIGHEST_PROTOCOL)
-            
+
         except Exception as ex:
             import logging
             OAuthLogger.add_log("Exception occured while deleting oauthtokens from File ",logging.ERROR,ex)

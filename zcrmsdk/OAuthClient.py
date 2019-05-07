@@ -16,7 +16,7 @@ class ZohoOAuth(object):
     '''
     configProperties={}
     #iamURL='https://accounts.zoho.com'
-    
+
     def __init__(self):
         '''
         Constructor
@@ -38,6 +38,9 @@ class ZohoOAuth(object):
             else:
                 ZohoOAuth.set_config_values(config_dict)
             if(ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH] ==""):
+                # Allow use of database host
+                if(ZohoOAuthConstants.DATABASE_HOST not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_HOST]==""):
+                    ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_HOST]="127.0.0.1"
                 if(ZohoOAuthConstants.DATABASE_PORT not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]==""):
                     ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]="3306"
                 if(ZohoOAuthConstants.DATABASE_USERNAME not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME]==""):
@@ -49,11 +52,11 @@ class ZohoOAuth(object):
         except Exception as ex:
             OAuthLogger.add_log('Exception occured while reading oauth configurations',logging.ERROR,ex)
             raise ex
-    
+
     @staticmethod
     def set_config_values(config_dict):
         config_keys = [ZohoOAuthConstants.CLIENT_ID,ZohoOAuthConstants.CLIENT_SECRET,ZohoOAuthConstants.REDIRECT_URL,ZohoOAuthConstants.ACCESS_TYPE
-			,ZohoOAuthConstants.IAM_URL,ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH,ZohoOAuthConstants.DATABASE_PORT
+			,ZohoOAuthConstants.IAM_URL,ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH,ZohoOAuthContacts.DATABASE_HOST, ZohoOAuthConstants.DATABASE_PORT
 			,ZohoOAuthConstants.DATABASE_PASSWORD,ZohoOAuthConstants.DATABASE_USERNAME]
         if(ZohoOAuthConstants.ACCESS_TYPE not in config_dict or config_dict[ZohoOAuthConstants.ACCESS_TYPE] is None):
             ZohoOAuth.configProperties[ZohoOAuthConstants.ACCESS_TYPE] = "offline"
@@ -112,13 +115,13 @@ class ZohoOAuthClient(object):
         Constructor
         '''
         ZohoOAuthClient.oAuthParams=oauthParams
-        
+
     @staticmethod
     def get_instance(param=None):
         if(param!=None and ZohoOAuthClient.oAuthClientIns==None):
             ZohoOAuthClient.oAuthClientIns=ZohoOAuthClient(param)
         return ZohoOAuthClient.oAuthClientIns
-            
+
     def get_access_token(self,userEmail):
         try:
             handler=ZohoOAuth.get_persistence_instance()
@@ -150,11 +153,11 @@ class ZohoOAuthClient(object):
                 oAuthTokens.refreshToken=refreshToken
                 ZohoOAuth.get_persistence_instance().saveOAuthTokens(oAuthTokens)
                 return oAuthTokens
-            
+
         except ZohoOAuthException as ex:
             OAuthLogger.add_log("Exception occured while refreshing oauthtoken",logging.ERROR,ex)
             raise ex
-            
+
     def generate_access_token(self,grantToken):
         if(grantToken==None):
             raise ZohoOAuthException("Grant token not provided!")
@@ -172,11 +175,11 @@ class ZohoOAuthClient(object):
                 return oAuthTokens
             else:
                 raise ZohoOAuthException("Exception occured while fetching accesstoken from Grant Token;Response is:"+str(responseJSON))
-            
+
         except ZohoOAuthException as ex:
             OAuthLogger.add_log("Exception occured while generating access token",logging.ERROR,ex)
             raise ex
-    
+
     def get_tokens_from_json(self,responseJson):
         expiresIn = responseJson[ZohoOAuthConstants.EXPIRES_IN]
         expiresIn=expiresIn+(ZohoOAuthTokens.get_current_time_in_millis())
@@ -210,7 +213,7 @@ class ZohoOAuthTokens(object):
         self.accessToken=access_token
         self.expiryTime=expiry_time
         self.userEmail=user_email
-        
+
     def get_access_token(self):
         if((self.expiryTime-self.get_current_time_in_millis())>10):
             return self.accessToken

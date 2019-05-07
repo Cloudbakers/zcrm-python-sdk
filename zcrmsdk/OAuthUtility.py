@@ -26,11 +26,12 @@ class ZohoOAuthConstants(object):
     GRANT_TYPE_AUTH_CODE="authorization_code";
     TOKEN_PERSISTENCE_PATH="token_persistence_path";
     SANDBOX="sandbox";
+    DATABASE_HOST="mysql_host";
     DATABASE_PORT="mysql_port";
     DATABASE_PASSWORD="mysql_password";
     DATABASE_USERNAME="mysql_username";
     PERSISTENCE_FILE_NAME="zcrm_oauthtokens.pkl"
-    
+
     GRANT_TYPE_REFRESH="refresh_token";
     CODE="code";
     GRANT_TOKEN="grant_token";
@@ -41,17 +42,17 @@ class ZohoOAuthConstants(object):
     TOKEN = "token";
     DISPATCH_TO = "dispatchTo";
     OAUTH_TOKENS_PARAM = "oauth_tokens";
-    
+
     OAUTH_HEADER_PREFIX="Zoho-oauthtoken ";
     AUTHORIZATION="Authorization";
     REQUEST_METHOD_GET="GET";
     REQUEST_METHOD_POST="POST";
-    
+
     RESPONSECODE_OK=200;
 
 class ZohoOAuthException(Exception):
     '''
-    This is the custom exception class for handling Client Library OAuth related exceptions 
+    This is the custom exception class for handling Client Library OAuth related exceptions
     '''
     def __init__(self, err_message):
         self.message=err_message
@@ -67,7 +68,7 @@ class ZohoOAuthHTTPConnector(object):
     @staticmethod
     def get_instance(url,params=None,headers=None,body=None,method=None):
         return ZohoOAuthHTTPConnector(url,params,headers,body,method)
-    
+
     def __init__(self, url,params,headers,body,method):
         '''
         Constructor
@@ -77,7 +78,7 @@ class ZohoOAuthHTTPConnector(object):
         self.req_method=method
         self.req_params=params
         self.req_body=body
-        
+
     def trigger_request(self):
         response=None
         import requests,json
@@ -106,7 +107,7 @@ class ZohoOAuthHTTPConnector(object):
         self.req_params[key]=value
     def get_http_request_params(self):
         return self.req_params
-    
+
 class ZohoOAuthParams(object):
     '''
     This class is to OAuth related params(i.e. client_id,client_secret,..)
@@ -121,7 +122,7 @@ class ZohoOAuthParams(object):
     @staticmethod
     def get_instance(client_id,client_secret,redirect_uri):
         return ZohoOAuthParams(client_id,client_secret,redirect_uri)
-    
+
 import logging
 logger=logging.getLogger('Client_Library_OAUTH')
 class OAuthLogger(object):
@@ -134,7 +135,7 @@ class OAuthLogger(object):
         consoleHandler = logging.StreamHandler()
         # create formatter and add it to the handlers
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        
+
         try:
             from .Utility import ZCRMConfigUtil,APIConstants
         except ImportError:
@@ -145,18 +146,18 @@ class OAuthLogger(object):
         if log_path is not None and log_path.strip()!="":
             import os
             log_path=os.path.join(log_path,'oauth.log')
-        
+
             fileHandler=logging.FileHandler(log_path)
             fileHandler.setLevel(logging.DEBUG)
             fileHandler.setFormatter(formatter)
             logger.addHandler(fileHandler)
-        
+
         consoleHandler.setLevel(logging.DEBUG)
         consoleHandler.setFormatter(formatter)
         # add the handlers to the logger
         logger.addHandler(consoleHandler)
-        
-        
+
+
         if(exception!=None):
             message+='; Exception Message::'+exception.__str__()
         if(level==logging.ERROR):
