@@ -78,10 +78,24 @@ class ZohoOAuthPersistenceHandler(object):
             from OAuthClient import ZohoOAuth
             from OAuthUtility import ZohoOAuthConstants
         import mysql.connector
-        connection=mysql.connector.connect(user=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME], password=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD],host=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_HOST],port=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT],database='zohooauth')
+
+        config = {
+            'user': ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME],
+            'password': ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD],
+            'port': ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT],
+            'database': 'zohooauth'
+        }
+
+        # Add unix socket or host, depending on which was included in the config.
+        # If neither is included, host defaults to localhost
+        if ZohoOAuth.configProperties[ZohoOAuthConstants.UNIX_SOCKET]:
+            config['unix_socket'] = ZohoOAuth.configProperties[ZohoOAuthConstants.UNIX_SOCKET]
+        else:
+            config['host'] = ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_HOST]
+
+        connection=mysql.connector.connect(**config)
         return connection
-        #connection=MySQLdb.connect(host="localhost",user="root",passwd="",db="zohooauth")
-        #return connection
+
 class ZohoOAuthPersistenceFileHandler(object):
     '''
     This class deals with persistance of oauth related tokens in File

@@ -28,6 +28,7 @@ class ZohoOAuthConstants(object):
     SANDBOX="sandbox";
     DATABASE_HOST="mysql_host";
     DATABASE_PORT="mysql_port";
+    UNIX_SOCKET="unix_socket";
     DATABASE_PASSWORD="mysql_password";
     DATABASE_USERNAME="mysql_username";
     PERSISTENCE_FILE_NAME="zcrm_oauthtokens.pkl"

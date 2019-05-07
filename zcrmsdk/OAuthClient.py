@@ -43,6 +43,8 @@ class ZohoOAuth(object):
                     ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_HOST]="127.0.0.1"
                 if(ZohoOAuthConstants.DATABASE_PORT not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]==""):
                     ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]="3306"
+                if(ZohoOAuthConstants.UNIX_SOCKET not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.UNIX_SOCKET]==""):
+                    ZohoOAuth.configProperties[ZohoOAuthConstants.UNIX_SOCKET]=""
                 if(ZohoOAuthConstants.DATABASE_USERNAME not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME]==""):
                     ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME]="root"
                 if(ZohoOAuthConstants.DATABASE_PASSWORD not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD]==""):
@@ -57,7 +59,7 @@ class ZohoOAuth(object):
     def set_config_values(config_dict):
         config_keys = [ZohoOAuthConstants.CLIENT_ID,ZohoOAuthConstants.CLIENT_SECRET,ZohoOAuthConstants.REDIRECT_URL,ZohoOAuthConstants.ACCESS_TYPE
 			,ZohoOAuthConstants.IAM_URL,ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH,ZohoOAuthConstants.DATABASE_HOST, ZohoOAuthConstants.DATABASE_PORT
-			,ZohoOAuthConstants.DATABASE_PASSWORD,ZohoOAuthConstants.DATABASE_USERNAME]
+			,ZohoOAuthConstants.UNIX_SOCKET, ZohoOAuthConstants.DATABASE_PASSWORD,ZohoOAuthConstants.DATABASE_USERNAME]
         if(ZohoOAuthConstants.ACCESS_TYPE not in config_dict or config_dict[ZohoOAuthConstants.ACCESS_TYPE] is None):
             ZohoOAuth.configProperties[ZohoOAuthConstants.ACCESS_TYPE] = "offline"
         if(ZohoOAuthConstants.IAM_URL not in config_dict or config_dict[ZohoOAuthConstants.IAM_URL] == ""):
